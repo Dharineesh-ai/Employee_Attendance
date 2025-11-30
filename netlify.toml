@@ -1,0 +1,4 @@
+[build]
+  base    = "employee-attendance-frontend"
+  publish = "dist"
+  command = "npm install && npm run build"
