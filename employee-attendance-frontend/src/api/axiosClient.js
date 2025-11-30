@@ -1,21 +1,8 @@
+// example axios client
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:5000'; // Backend port
-
-const axiosClient = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000',
 });
 
-// Add token to requests after login
-axiosClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
-export default axiosClient;
+export default api;
