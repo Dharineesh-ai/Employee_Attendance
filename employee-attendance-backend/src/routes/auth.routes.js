@@ -11,6 +11,19 @@ const signToken = (userId) =>
     expiresIn: '7d',
   });
 
+import express from 'express';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import User from '../models/User.js';
+import { authMiddleware } from '../middleware/auth.js';
+
+const router = express.Router();
+
+const signToken = (userId) =>
+  jwt.sign({ id: userId }, process.env.JWT_SECRET || 'secret123', {
+    expiresIn: '7d',
+  });
+
 router.post('/register', async (req, res) => {
   try {
     const { name, email, password, role, employeeId, department } = req.body;
@@ -58,6 +71,12 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ message: 'Login failed' });
   }
 });
+
+router.get('/me', authMiddleware, async (req, res) => {
+  res.json(req.user);
+});
+
+export default router;
 
 router.get('/me', authMiddleware, async (req, res) => {
   res.json(req.user);
