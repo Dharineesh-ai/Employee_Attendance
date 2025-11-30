@@ -11,12 +11,15 @@ const signToken = (userId) =>
     expiresIn: '7d',
   });
 
+// REGISTER
 router.post('/register', async (req, res) => {
   try {
     const { name, email, password, role, employeeId, department } = req.body;
 
     const existing = await User.findOne({ email });
-    if (existing) return res.status(400).json({ message: 'Email already registered' });
+    if (existing) {
+      return res.status(400).json({ message: 'Email already registered' });
+    }
 
     const hash = await bcrypt.hash(password, 10);
 
@@ -32,41 +35,57 @@ router.post('/register', async (req, res) => {
     const token = signToken(user._id);
     const userSafe = { ...user.toObject(), password: undefined };
 
-    res.status(201).json({ user: userSafe, token });
+    // set auth cookie
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.status(201).json({ user: userSafe, token });
   } catch (err) {
     console.error('Register error', err);
-    res.status(500).json({ message: 'Registration failed' });
+    return res.status(500).json({ message: 'Registration failed' });
   }
 });
 
+// LOGIN
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: 'Invalid credentials' });
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
 
     const ok = await bcrypt.compare(password, user.password);
-    if (!ok) return res.status(400).json({ message: 'Invalid credentials' });
+    if (!ok) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
 
     const token = signToken(user._id);
     const userSafe = { ...user.toObject(), password: undefined };
 
-    res.json({ user: userSafe, token });
+    // set auth cookie
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.json({ user: userSafe, token });
   } catch (err) {
     console.error('Login error', err);
-    res.status(500).json({ message: 'Login failed' });
+    return res.status(500).json({ message: 'Login failed' });
   }
 });
 
+// CURRENT USER
 router.get('/me', authMiddleware, async (req, res) => {
-  res.json(req.user);
-});
-
-export default router;
-
-router.get('/me', authMiddleware, async (req, res) => {
-  res.json(req.user);
+  return res.json(req.user);
 });
 
 export default router;
