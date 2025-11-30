@@ -1,0 +1,11 @@
+/* src/App.css */
+#root {
+  margin: 0;
+  padding: 0;
+}
+
+/* Optional: simple body background if not using Tailwind for it */
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
