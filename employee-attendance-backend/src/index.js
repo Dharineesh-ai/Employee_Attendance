@@ -16,10 +16,7 @@ const allowedOrigins = [
 
 app.use(
   cors({
-    origin: [
-      'http://localhost:5173',
-      'https://employee-attendanc.netlify.app',
-    ],
+    origin: allowedOrigins,
     credentials: true,
   })
 );
