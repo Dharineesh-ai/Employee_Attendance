@@ -54,8 +54,25 @@ export default function MarkAttendancePage() {
 
 
   if (loading) {
-    return <div className="text-center py-12">Loading today&apos;s attendance...</div>;
-  }
+  return <div className="text-center py-12">Loading today&apos;s attendance...</div>;
+}
+
+if (!todayRecord) {
+  return (
+    <div className="space-y-6">
+      <div className="bg-white p-6 rounded-lg shadow">
+        <h1 className="text-2xl font-bold text-gray-900">Mark Attendance</h1>
+        <p className="text-gray-600">Could not load today&apos;s attendance.</p>
+      </div>
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded">
+          {error}
+        </div>
+      )}
+    </div>
+  );
+}
+
 
   const canCheckIn = !todayRecord.checkInTime;
   const canCheckOut = !!todayRecord.checkInTime && !todayRecord.checkOutTime;
